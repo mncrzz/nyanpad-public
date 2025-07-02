@@ -1,231 +1,213 @@
-/* Основные стили */
 :root {
-  --neon-blue: #08fdd8;
-  --neon-pink: #ff2d75;
-  --dark-bg: #1d1d1d;
-  --card-bg: #252525;
+    --primary: #9b59b6;
+    --secondary: #3498db;
+    --accent: #f1c40f;
+    --dark: #1d1d1d;
+    --light: #f5f5f5;
 }
 
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: var(--dark-bg);
-  color: white;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: var(--light);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
 }
 
-/* Контейнер */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
-/* Шапка */
 header {
-  text-align: center;
-  margin-bottom: 3rem;
-  position: relative;
+    text-align: center;
+    margin-bottom: 3rem;
 }
 
 header h1 {
-  font-size: 3rem;
-  margin: 0;
-  background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 10px rgba(8, 253, 216, 0.3);
+    font-size: 3rem;
+    margin: 0;
+    color: var(--primary);
 }
 
-/* Форма загрузки */
+header p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
 .upload-container {
-  background: var(--card-bg);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-
-.upload-container:hover {
-  transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    backdrop-filter: blur(10px);
 }
 
 .upload-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .file-input {
-  border: 2px dashed var(--neon-blue);
-  border-radius: 10px;
-  padding: 3rem 2rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
+    border: 2px dashed var(--primary);
+    border-radius: 10px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
 .file-input:hover {
-  border-color: var(--neon-pink);
-  box-shadow: 0 0 15px rgba(255, 45, 117, 0.2);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .file-input i {
-  font-size: 3rem;
-  color: var(--neon-blue);
-  margin-bottom: 1rem;
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
 }
 
-/* Кнопки */
 .btn {
-  background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 15px rgba(8, 253, 216, 0.3);
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
 }
 
 .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 45, 117, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Прогресс-бар */
 .progress-container {
-  width: 100%;
-  background: #333;
-  border-radius: 10px;
-  margin-top: 1rem;
-  overflow: hidden;
-  height: 8px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 1rem;
+    overflow: hidden;
+    height: 8px;
 }
 
 .progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-  width: 0%;
-  transition: width 0.3s ease;
-  border-radius: 10px;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
-/* Список звуков */
 .sound-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
 .sound-card {
-  background: var(--card-bg);
-  border-radius: 15px;
-  padding: 1.5rem;
-  transition: all 0.3s;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
 }
 
 .sound-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(8, 253, 216, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .sound-title {
-  font-size: 1.2rem;
-  margin: 0 0 1rem 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--neon-blue);
+    font-size: 1.2rem;
+    margin: 0 0 1rem 0;
+    color: var(--primary);
 }
 
-/* Аудиоплеер */
 audio {
-  width: 100%;
-  margin: 1rem 0;
-  border-radius: 10px;
-  background: #333;
+    width: 100%;
+    margin: 1rem 0;
+    border-radius: 10px;
 }
 
-/* Кнопки действий */
 .sound-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
 .action-btn {
-  flex: 1;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+    font-weight: bold;
 }
 
 .copy-btn {
-  background: rgba(8, 253, 216, 0.2);
+    background: rgba(155, 89, 182, 0.3);
 }
 
 .copy-btn:hover {
-  background: var(--neon-blue);
+    background: var(--primary);
 }
 
-.play-btn {
-  background: rgba(255, 45, 117, 0.2);
+.soundpad-btn {
+    background: rgba(241, 196, 15, 0.3);
 }
 
-.play-btn:hover {
-  background: var(--neon-pink);
+.soundpad-btn:hover {
+    background: var(--accent);
 }
 
 .delete-btn {
-  background: rgba(255, 0, 0, 0.2);
+    background: rgba(231, 76, 60, 0.3);
 }
 
 .delete-btn:hover {
-  background: #ff0000;
+    background: #e74c3c;
 }
 
-/* Анимации */
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(8, 253, 216, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(8, 253, 216, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(8, 253, 216, 0); }
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.pulse {
-  animation: pulse 2s infinite;
+.creator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.9rem;
+    opacity: 0.7;
 }
 
-/* Мобильная адаптация */
 @media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-  
-  header h1 {
-    font-size: 2rem;
-  }
-  
-  .sound-list {
-    grid-template-columns: 1fr;
-  }
+    .container {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .sound-list {
+        grid-template-columns: 1fr;
+    }
 }

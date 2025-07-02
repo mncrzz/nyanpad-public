@@ -1,43 +1,41 @@
-import { supabase } from './supabase.js';
+// Конфигурация Supabase
+const supabaseUrl = 'https://gilmkevkupbnirtynzki.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbG1rZXZrdXBibmlydHluemtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0Njk0MDgsImV4cCI6MjA2NzA0NTQwOH0.Y3JK6mShChu0nVFj_MNApkvT2tcoGNaUNep0rpnglk4';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // DOM элементы
-const fileInput = document.createElement('input');
-fileInput.type = 'file';
-fileInput.id = 'fileInput'; // Добавляем ID
-fileInput.accept = 'audio/*';
-fileInput.hidden = true;
-document.body.appendChild(fileInput);
-
+const fileInput = document.getElementById('fileInput');
 const fileInputLabel = document.getElementById('fileInputLabel');
 const uploadBtn = document.getElementById('uploadBtn');
 const soundList = document.getElementById('soundList');
 const progressBar = document.getElementById('progressBar');
 const toast = document.getElementById('toast');
-const fileInfo = document.getElementById('fileInfo');
+
+// Текущий пользователь
+let currentUser = null;
 
 // Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    // Показываем информацию о проекте
-    console.log('NyanPad Sound Host | Created by mncrzz_dev');
-    
-    // Назначаем обработчики
-    setupEventListeners();
-});
+init();
 
-function setupEventListeners() {
-    // Клик по области загрузки
-    fileInputLabel.addEventListener('click', () => {
-        fileInput.click(); // Теперь это точно сработает
-    });
+async function init() {
+    // Проверяем авторизацию
+    const { data: { user } } = await supabase.auth.getUser();
+    currentUser = user;
     
-    // Остальные обработчики...
+    if (!currentUser) {
+        showToast('Пожалуйста, войдите в систему', 'error');
+        return;
+    }
+
+    setupEventListeners();
+    await loadSounds();
 }
 
 function setupEventListeners() {
     // Клик по области загрузки
     fileInputLabel.addEventListener('click', () => fileInput.click());
     
-    // Изменение выбранного файла
+    // Изменение файла
     fileInput.addEventListener('change', handleFileSelect);
     
     // Кнопка загрузки
@@ -46,16 +44,16 @@ function setupEventListeners() {
     // Drag and drop
     fileInputLabel.addEventListener('dragover', (e) => {
         e.preventDefault();
-        fileInputLabel.style.borderColor = '#ff2d75';
+        fileInputLabel.style.borderColor = 'var(--accent)';
     });
     
     fileInputLabel.addEventListener('dragleave', () => {
-        fileInputLabel.style.borderColor = '#08fdd8';
+        fileInputLabel.style.borderColor = 'var(--primary)';
     });
     
     fileInputLabel.addEventListener('drop', (e) => {
         e.preventDefault();
-        fileInputLabel.style.borderColor = '#08fdd8';
+        fileInputLabel.style.borderColor = 'var(--primary)';
         fileInput.files = e.dataTransfer.files;
         handleFileSelect();
     });
@@ -64,35 +62,36 @@ function setupEventListeners() {
 function handleFileSelect() {
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        fileInfo.innerHTML = `
-            <strong>${file.name}</strong>
-            <span>${formatFileSize(file.size)}</span>
+        fileInputLabel.innerHTML = `
+            <i class="fas fa-file-audio"></i>
+            <p><strong>${file.name}</strong></p>
+            <p>${formatFileSize(file.size)}</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         `;
     }
 }
 
 async function uploadFile() {
     if (!fileInput.files || fileInput.files.length === 0) {
-        showToast('Выберите файл для загрузки!', 'error');
+        showToast('Выберите файл для загрузки', 'error');
         return;
     }
 
     const file = fileInput.files[0];
-    
-    // Проверка типа файла
     const validTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
+    
     if (!validTypes.includes(file.type)) {
-        showToast('Только MP3, WAV или OGG файлы!', 'error');
+        showToast('Только MP3, WAV или OGG файлы', 'error');
         return;
     }
 
     try {
-        // Блокируем кнопку на время загрузки
         uploadBtn.disabled = true;
         uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
         
-        // Генерируем уникальное имя файла
-        const fileName = `${currentUser.id}_${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+        const fileName = `${currentUser.id}_${Date.now()}_${file.name}`;
         
         // Загрузка в Supabase Storage
         const { data, error: uploadError } = await supabase.storage
@@ -113,7 +112,7 @@ async function uploadFile() {
             .from('sounds')
             .getPublicUrl(fileName);
 
-        // Сохраняем метаданные в базу данных
+        // Сохраняем в базу данных
         const { error: dbError } = await supabase
             .from('sounds')
             .insert([{
@@ -126,22 +125,22 @@ async function uploadFile() {
 
         if (dbError) throw dbError;
 
-        // Успешная загрузка
-        showToast('Файл успешно загружен!', 'success');
-        
-        // Сбрасываем форму
+        showToast('Файл успешно загружен', 'success');
         fileInput.value = '';
-        fileInfo.innerHTML = '';
+        fileInputLabel.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Выберите или перетащите аудиофайл</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        `;
         progressBar.style.width = '0%';
-        
-        // Обновляем список звуков
         await loadSounds();
         
     } catch (error) {
         console.error('Ошибка загрузки:', error);
         showToast(`Ошибка: ${error.message}`, 'error');
     } finally {
-        // Разблокируем кнопку
         uploadBtn.disabled = false;
         uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Загрузить';
     }
@@ -151,12 +150,11 @@ async function loadSounds() {
     try {
         soundList.innerHTML = `
             <div class="sound-card" style="grid-column: 1/-1; text-align: center;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+                <i class="fas fa-spinner fa-spin"></i>
                 <p>Загрузка звуков...</p>
             </div>
         `;
 
-        // Получаем звуки текущего пользователя
         const { data: sounds, error } = await supabase
             .from('sounds')
             .select('*')
@@ -168,33 +166,27 @@ async function loadSounds() {
         if (sounds.length === 0) {
             soundList.innerHTML = `
                 <div class="sound-card" style="grid-column: 1/-1; text-align: center;">
-                    <i class="fas fa-music" style="font-size: 2rem;"></i>
+                    <i class="fas fa-music"></i>
                     <h3>Звуков пока нет</h3>
-                    <p>Загрузите первый звук, чтобы начать!</p>
+                    <p>Загрузите первый звук</p>
                 </div>
             `;
             return;
         }
 
-        // Отображаем звуки
         soundList.innerHTML = sounds.map(sound => `
             <div class="sound-card">
                 <h3 class="sound-title">
                     <i class="fas fa-file-audio"></i> ${sound.name}
                     <span class="file-size">${formatFileSize(sound.size)}</span>
                 </h3>
-                
                 <audio controls src="${sound.url}"></audio>
-                
                 <div class="sound-actions">
                     <button class="action-btn copy-btn" data-url="${sound.url}">
-                        <i class="fas fa-copy"></i> Копировать URL
+                        <i class="fas fa-copy"></i> Копировать
                     </button>
-                    <button class="action-btn play-btn" data-url="${sound.url}">
-                        <i class="fas fa-play"></i> Воспроизвести
-                    </button>
-                    <button class="action-btn delete-btn" data-id="${sound.id}">
-                        <i class="fas fa-trash"></i> Удалить
+                    <button class="action-btn soundpad-btn" data-url="${sound.url}">
+                        <i class="fas fa-plus"></i> SoundPad
                     </button>
                 </div>
             </div>
@@ -204,28 +196,13 @@ async function loadSounds() {
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 copyToClipboard(btn.getAttribute('data-url'));
-                showToast('Ссылка скопирована в буфер обмена!', 'success');
+                showToast('Ссылка скопирована', 'success');
             });
         });
 
-        document.querySelectorAll('.play-btn').forEach(btn => {
+        document.querySelectorAll('.soundpad-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const audio = btn.closest('.sound-card').querySelector('audio');
-                if (audio.paused) {
-                    audio.play();
-                    btn.innerHTML = '<i class="fas fa-pause"></i> Пауза';
-                } else {
-                    audio.pause();
-                    btn.innerHTML = '<i class="fas fa-play"></i> Воспроизвести';
-                }
-            });
-        });
-
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if (confirm('Удалить этот звук?')) {
-                    await deleteSound(btn.getAttribute('data-id'));
-                }
+                addToSoundpad(btn.getAttribute('data-url'));
             });
         });
 
@@ -235,45 +212,22 @@ async function loadSounds() {
             <div class="sound-card" style="grid-column: 1/-1; text-align: center; color: #ff6b6b;">
                 <i class="fas fa-exclamation-triangle"></i>
                 <h3>Ошибка загрузки</h3>
-                <p>${error.message || 'Попробуйте перезагрузить страницу'}</p>
+                <p>${error.message || 'Обновите страницу'}</p>
             </div>
         `;
     }
 }
 
-async function deleteSound(soundId) {
+function addToSoundpad(url) {
     try {
-        // Получаем информацию о звуке
-        const { data: sound, error: fetchError } = await supabase
-            .from('sounds')
-            .select('*')
-            .eq('id', soundId)
-            .single();
-
-        if (fetchError) throw fetchError;
-
-        // Удаляем файл из хранилища
-        const fileName = sound.url.split('/').pop();
-        const { error: storageError } = await supabase.storage
-            .from('sounds')
-            .remove([fileName]);
-
-        if (storageError) throw storageError;
-
-        // Удаляем запись из базы данных
-        const { error: dbError } = await supabase
-            .from('sounds')
-            .delete()
-            .eq('id', soundId);
-
-        if (dbError) throw dbError;
-
-        showToast('Звук успешно удален!', 'success');
-        await loadSounds();
-
-    } catch (error) {
-        console.error('Ошибка удаления:', error);
-        showToast('Ошибка при удалении звука', 'error');
+        window.location.href = `soundpad://add?url=${encodeURIComponent(url)}`;
+        setTimeout(() => {
+            copyToClipboard(url);
+            showToast('Ссылка скопирована. Вставьте в SoundPad!', 'info');
+        }, 300);
+    } catch (e) {
+        copyToClipboard(url);
+        showToast('Ссылка скопирована. Откройте SoundPad и вставьте URL', 'info');
     }
 }
 
@@ -283,28 +237,24 @@ function formatFileSize(bytes) {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
 }
 
 function copyToClipboard(text) {
-    navigator.clipboard.writeText(text)
-        .catch(err => {
-            console.error('Ошибка копирования:', err);
-            // Fallback для старых браузеров
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        });
+    navigator.clipboard.writeText(text).catch(err => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+    });
 }
 
 function showToast(message, type = 'info') {
     toast.textContent = message;
     toast.className = 'toast ' + type;
     toast.style.display = 'block';
-    
     setTimeout(() => {
         toast.style.opacity = '0';
         setTimeout(() => {
@@ -313,16 +263,5 @@ function showToast(message, type = 'info') {
         }, 300);
     }, 3000);
 }
-console.log('NyanPad Host initialized');
-console.log('Created by mncrzz_dev');
 
-// Можно добавить простые эффекты
-document.addEventListener('DOMContentLoaded', () => {
-    const title = document.querySelector('h1');
-    title.addEventListener('mouseover', () => {
-        title.style.transform = 'scale(1.05)';
-    });
-    title.addEventListener('mouseout', () => {
-        title.style.transform = 'scale(1)';
-    });
-});
+console.log('NyanPad Host v1.0 | Created by mncrzz_dev');
