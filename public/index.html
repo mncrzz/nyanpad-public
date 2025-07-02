@@ -3,41 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NyanPad Sound Host</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>Nyanpad | by mncrzz_dev</title>
     <style>
-        .creator-credits {
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .creator {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            color: #666;
-            font-size: 12px;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-cat"></i> NyanPad Sound Host</h1>
-            <p>Хостинг звуков для вашего SoundPad</p>
-        </header>
+    <div class="content">
+        <h1>Nyanpad Host</h1>
+        <p>Скоро здесь будет крутой хостинг для ваших звуков</p>
+        <p>Проект в разработке...</p>
     </div>
-
-    <div class="creator-credits">
-        Created by mncrzz_dev
-    </div>
-
-    <!-- Подключаем скрипты -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="/assets/js/supabase.js"></script>
-    <script src="/assets/js/app.js"></script>
-
-    <script>
-        // Гарантированно работающий выбор файлов
-        document.getElementById('fileInputLabel').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-    </script>
+    
+    <div class="creator">Created by mncrzz_dev</div>
 </body>
 </html>
