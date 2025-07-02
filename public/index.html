@@ -1,17 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>nyanpad</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nyanpad | Ваш хостинг для SoundPad</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/style.css">
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script type="module" src="/assets/js/app.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>nyanpad</h1>
-    <input type="file" id="soundFile" accept="audio/*">
-    <button id="uploadBtn">Загрузить звук</button>
-    <div id="soundList"></div>
+    <header>
+      <h1><i class="fas fa-wave-square"></i> nyanpad</h1>
+      <p>Стильный хостинг для ваших звуков в SoundPad</p>
+    </header>
+
+    <div class="upload-container pulse">
+      <h2><i class="fas fa-cloud-upload-alt"></i> Загрузить новый звук</h2>
+      <div class="upload-form">
+        <label class="file-input" id="fileInputLabel">
+          <i class="fas fa-file-audio"></i>
+          <p>Перетащите файл или кликните для выбора</p>
+          <p id="fileInfo"></p>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </label>
+        <button id="uploadBtn" class="btn">
+          <i class="fas fa-upload"></i> Загрузить
+        </button>
+      </div>
+    </div>
+
+    <div class="sounds-container">
+      <h2><i class="fas fa-headphones"></i> Ваши звуки</h2>
+      <div id="soundList" class="sound-list">
+        <!-- Сюда будут добавляться звуки -->
+      </div>
+    </div>
   </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/app.js"></script>
 </body>
 </html>
