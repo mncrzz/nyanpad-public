@@ -1,48 +1,43 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nyanpad | Ваш хостинг для SoundPad</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NyanPad Sound Host</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .creator-credits {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1><i class="fas fa-wave-square"></i> nyanpad</h1>
-      <p>Стильный хостинг для ваших звуков в SoundPad</p>
-    </header>
-
-    <div class="upload-container pulse">
-      <h2><i class="fas fa-cloud-upload-alt"></i> Загрузить новый звук</h2>
-      <div class="upload-form">
-        <label class="file-input" id="fileInputLabel">
-          <i class="fas fa-file-audio"></i>
-          <p>Перетащите файл или кликните для выбора</p>
-          <p id="fileInfo"></p>
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-          </div>
-        </label>
-        <button id="uploadBtn" class="btn">
-          <i class="fas fa-upload"></i> Загрузить
-        </button>
-      </div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cat"></i> NyanPad Sound Host</h1>
+            <p>Хостинг звуков для вашего SoundPad</p>
+        </header>
     </div>
 
-    <div class="sounds-container">
-      <h2><i class="fas fa-headphones"></i> Ваши звуки</h2>
-      <div id="soundList" class="sound-list">
-        <!-- Сюда будут добавляться звуки -->
-      </div>
+    <div class="creator-credits">
+        Created by mncrzz_dev
     </div>
-  </div>
 
-  <div id="toast" class="toast"></div>
+    <!-- Подключаем скрипты -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="/assets/js/supabase.js"></script>
+    <script src="/assets/js/app.js"></script>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="/assets/js/supabase.js"></script>
-  <script src="/assets/js/app.js"></script>
+    <script>
+        // Гарантированно работающий выбор файлов
+        document.getElementById('fileInputLabel').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+    </script>
 </body>
 </html>

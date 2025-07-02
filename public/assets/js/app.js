@@ -3,6 +3,7 @@ import { supabase } from './supabase.js';
 // DOM элементы
 const fileInput = document.createElement('input');
 fileInput.type = 'file';
+fileInput.id = 'fileInput'; // Добавляем ID
 fileInput.accept = 'audio/*';
 fileInput.hidden = true;
 document.body.appendChild(fileInput);
@@ -14,28 +15,22 @@ const progressBar = document.getElementById('progressBar');
 const toast = document.getElementById('toast');
 const fileInfo = document.getElementById('fileInfo');
 
-// Текущий пользователь
-let currentUser = null;
-
 // Инициализация
-init();
-
-async function init() {
-    // Проверяем авторизацию
-    const { data: { user } } = await supabase.auth.getUser();
-    currentUser = user;
+document.addEventListener('DOMContentLoaded', () => {
+    // Показываем информацию о проекте
+    console.log('NyanPad Sound Host | Created by mncrzz_dev');
     
-    // Если пользователь не авторизован, перенаправляем на страницу входа
-    if (!currentUser) {
-        window.location.href = '/login.html';
-        return;
-    }
-
-    // Назначаем обработчики событий
+    // Назначаем обработчики
     setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Клик по области загрузки
+    fileInputLabel.addEventListener('click', () => {
+        fileInput.click(); // Теперь это точно сработает
+    });
     
-    // Загружаем звуки
-    await loadSounds();
+    // Остальные обработчики...
 }
 
 function setupEventListeners() {
